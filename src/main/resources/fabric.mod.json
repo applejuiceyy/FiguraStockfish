@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "figurastockfish",
+  "version": "${version}",
+  "name": "FiguraStockfish",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/FiguraStockfish/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.github.applejuiceyy.figurastockfish.client.FiguraStockfishClient"
+    ],
+    "figura_api": [
+      "com.github.applejuiceyy.figurastockfish.client.FiguraEntrypoint"
+    ]
+  },
+  "mixins": [
+    "FiguraStockfish.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "fabric": "*",
+    "minecraft": "*"
+  }
+}
