@@ -3,34 +3,15 @@ package com.github.applejuiceyy.figurastockfish.client.wrap;
 import com.github.applejuiceyy.figurastockfish.client.Bridger;
 import com.github.applejuiceyy.figurastockfish.client.CompletableFutureWrapper;
 import com.github.applejuiceyy.figurastockfish.stockfish.StockfishInstance;
-import org.luaj.vm2.Varargs;
-import org.moon.figura.avatar.Avatar;
-import org.moon.figura.lua.FiguraAPI;
+
 import org.moon.figura.lua.LuaWhitelist;
 
-import java.util.Collection;
 import java.util.function.Function;
 
 @LuaWhitelist
-public class StockfishWrapper implements FiguraAPI {
+public class StockfishWrapper {
     private final StockfishInstance inst;
     private final Bridger b;
-
-    @Override
-    public FiguraAPI build(Avatar avatar) {
-        return null;
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public Collection<Class<?>> getWhitelistedClasses() {
-        return null;
-    }
-
     public StockfishWrapper(StockfishInstance inst, Bridger b) {
         this.inst = inst;
         this.b = b;

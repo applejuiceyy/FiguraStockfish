@@ -9,6 +9,7 @@ import com.github.applejuiceyy.figurastockfish.stockfish.tree.StockfishError;
 
 import java.io.*;
 import java.lang.ref.PhantomReference;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class StockfishInstance {
-    static final HashMap<WeakReference<StockfishInstance>, Process> fishes = new HashMap<>();
+    static final ReferenceQueue<Object> refq = new ReferenceQueue<>();
 
     private final Process process;
     private final BufferedReader reader;
@@ -28,26 +29,14 @@ public class StockfishInstance {
 
     static {
         new Thread(() -> {
-            // TODO: reference queue
-            while (true) {
+            while(true) {
+                Cleaner<?> ref;
                 try {
-                    Thread.sleep(60000);
-                } catch (InterruptedException e) {
-                    return;
+                    ref = (Cleaner<?>) refq.remove();
+                } catch (InterruptedException ignored) {
+                    continue;
                 }
-
-                synchronized (fishes) {
-                    ArrayList<WeakReference<StockfishInstance>> dead = new ArrayList<>(2);
-                    fishes.forEach((fish, process) -> {
-                        if (fish.get() == null) {
-                            dead.add(fish);
-                            process.destroy();
-                        }
-                    });
-                    for (WeakReference<StockfishInstance> deadFish : dead) {
-                        fishes.remove(deadFish);
-                    }
-                }
+                ref.cleanup();
             }
         }, "Stockfish Instance Cleaner").start();
     }
@@ -57,9 +46,7 @@ public class StockfishInstance {
         this.reader = reader;
         this.writer = writer;
 
-        synchronized (fishes) {
-            fishes.put(new WeakReference<>(this), process);
-        }
+        new Cleaner<>(this, process::destroy);
     }
 
     static public CompletableFuture<StockfishInstance> bind(String cmd) {
@@ -157,5 +144,18 @@ public class StockfishInstance {
 
     public void close() {
         this.process.destroy();
+    }
+
+    static class Cleaner<O> extends PhantomReference<O> {
+        private final Runnable after;
+
+        public Cleaner(O referent, Runnable after) {
+            super(referent, refq);
+            this.after = after;
+        }
+
+        public void cleanup() {
+            this.after.run();
+        }
     }
 }

@@ -1,0 +1,6 @@
+{
+  "figurastockfish.config.category": "Figura Stockfish config",
+  "figurastockfish.config.category.tooltip": "Figura Stockfish config",
+  "figurastockfish.config.path": "UCI path",
+  "figurastockfish.config.path.tooltip": "The path to the chess engine executable supporting the UCI protocol (positioned at the minecraft folder)"
+}
